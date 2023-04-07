@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Inbound
+from .models import Product, Inbound, Outbound
 
 
 # form
@@ -22,7 +22,12 @@ class InboundForm(forms.ModelForm):
         }
 
 
-
 # form
 class OutboundForm(forms.ModelForm):
-    pass
+    class Meta:
+        model = Outbound
+        fields = ['product', 'quantity', 'outbound_date', 'outbound_price']
+        # 위젯을 이용하면 date를 정할 때 달력으로 할 수 있다
+        widgets = {
+            'outbound_date': forms.DateInput(attrs={'type': 'date'}),
+        }

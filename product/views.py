@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product
-from .forms import ProductForm, InboundForm
+from .models import Product, Inbound
+from .forms import ProductForm, InboundForm, OutboundForm
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
@@ -48,9 +48,6 @@ def inbound_create(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     if request.method == 'POST':
         form = InboundForm(request.POST)
-        print('post요청 들어옴')
-        print('form.errors : ', form.errors)
-        print('form.is_valid() : ', form.is_valid())
         if form.is_valid():
             # commit=False를 사용하면 인스턴스는 생성하지만 데이터베이스에 저장은 안함
             # 추가로 product를 업데이트 해주고 싶어서 했음
@@ -68,14 +65,31 @@ def inbound_create(request, product_id):
 
     return render(request, 'product/inbound_create.html', {'form': form, 'product': product})
 
-    # 입고 수량 조정
 
 @login_required
 def outbound_create(request, product_id):
     # 상품 출고 view
     # 출고 기록 생성
-    # 재고 수량 조정
-    pass
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        form = OutboundForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            # commit=False를 사용하면 인스턴스는 생성하지만 데이터베이스에 저장은 안함
+            # 추가로 product를 업데이트 해주고 싶어서 했음
+            outbound = form.save(commit=False)
+            outbound.product = product
+            outbound.save()
+            return redirect('/product-list')
+
+    elif request.method == 'GET':
+        user = request.user.is_authenticated
+        if not user:
+            return redirect('/sign-in')
+        else:
+            form = OutboundForm()
+
+    return render(request, 'product/outbound_create.html', {'form': form, 'product': product})
 
 
 @login_required
