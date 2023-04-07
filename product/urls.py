@@ -6,5 +6,6 @@ urlpatterns = [
     path('product-create/', views.product_create, name='product-create'),
     path('inbound-create/<int:product_id>', views.inbound_create, name='inbound-create'),
     path('outbound-create/<int:product_id>', views.outbound_create, name='outbound-create'),
+    path('inventory/<int:product_id>', views.inventory, name='inventory'),
 
 ]

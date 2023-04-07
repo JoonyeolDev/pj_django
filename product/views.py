@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Inbound
+from .models import Product, Inbound, Outbound
 from .forms import ProductForm, InboundForm, OutboundForm
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -12,7 +12,7 @@ def product_list(request):
     if request.method == 'GET':
         user = request.user.is_authenticated
         if user:
-            all_product = Product.objects.all()
+            all_product = Product.objects.all().order_by('code')
             return render(request, 'product/product_list.html', {'product': all_product})
         else:
             return redirect('/sign-in')
@@ -33,7 +33,9 @@ def product_create(request):
             return redirect('/sign-in')
         else:
             product_form = ProductForm()
-    return render(request, 'product/product_create.html', {'form': product_form})
+            all_product = Product.objects.all().order_by('code')
+            product_codes = [product.code for product in all_product]
+    return render(request, 'product/product_create.html', {'form': product_form, 'product_codes': product_codes})
 
 
 # view
@@ -93,11 +95,35 @@ def outbound_create(request, product_id):
 
 
 @login_required
-def inventory(request):
+def inventory(request, product_id):
     """
     inbound_create, outbound_create view에서 만들어진 데이터를 합산합니다.
     Django ORM을 통하여 총 수량, 가격등을 계산할 수 있습니다.
     """
+    if request.method == 'GET':
+        user = request.user.is_authenticated
+        if not user:
+            return redirect('/sign-in')
+        else:
+            product = get_object_or_404(Product, pk=product_id)
+            inbounds = Inbound.objects.filter(product=product)
+            outbounds = Outbound.objects.filter(product=product)
+
+            total_inbound_quantity = sum([inbound.quantity for inbound in inbounds])
+            total_inbound_price = sum([inbound.inbound_price * inbound.quantity for inbound in inbounds])
+
+            total_outbound_quantity = sum([outbound.quantity for outbound in outbounds])
+            total_outbound_price = sum([outbound.outbound_price * outbound.quantity for outbound in outbounds])
+
+            return render(request, 'product/inventory.html', {
+                'product': product,
+                'inbounds': inbounds,
+                'outbounds': outbounds,
+                'total_inbound_quantity': total_inbound_quantity,
+                'total_inbound_price': total_inbound_price,
+                'total_outbound_quantity': total_outbound_quantity,
+                'total_outbound_price': total_outbound_price
+            })
     # 총 입고 수량, 가격 계산
     # 총 출고 수량, 가격 계산
-    pass
+

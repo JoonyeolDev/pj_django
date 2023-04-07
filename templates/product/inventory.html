@@ -1,10 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+    상품 재고 현황
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">창고 페이지</h1>
+                <h2><strong>상품 :</strong> {{ product.name }}</h2>
+            <h4>현재 수량 : {{ product.stock_quantity }}</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="my-4">입고 리스트</h2>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Inbound Date</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inbound in inbounds %}
+                        <tr>
+                            <td>{{ inbound.inbound_date }}</td>
+                            <td>{{ inbound.quantity }}</td>
+                            <td>{{ inbound.inbound_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                <tfoot>
+                        <tr>
+                            <th>Total</th>
+                            <th>{{ total_inbound_quantity }}</th>
+                            <th>{{ total_inbound_price }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h2 class="my-4">출고 리스트</h2>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Outbound Date</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for outbound in outbounds %}
+                        <tr>
+                            <td>{{ outbound.outbound_date }}</td>
+                            <td>{{ outbound.quantity }}</td>
+                            <td>{{ outbound.outbound_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                <tfoot>
+                        <tr>
+                            <th>Total</th>
+                            <th>{{ total_outbound_quantity }}</th>
+                            <th>{{ total_outbound_price }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <a type="button" class="btn btn-primary" href="/product-list/">상품 리스트 페이지로</a>
+    </div>
+{% endblock %}

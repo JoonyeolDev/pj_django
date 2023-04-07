@@ -1,13 +1,10 @@
 from django.db import models
 import datetime
 
+
 # Create your models here.
 # model
 class Product(models.Model):
-    """
-    상품 모델입니다.
-    상품 코드, 상품 이름, 상품 설명, 상품 가격, 사이즈 필드를 가집니다.
-    """
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -21,10 +18,8 @@ class Product(models.Model):
     size = models.CharField(choices=sizes, max_length=1)
     stock_quantity = models.IntegerField(default=0)
 
-    # __str__이 있으면 출력할 때 모델 인스턴스를 읽기 쉽다
-    def __str__(self):
-        return self.code
-
+    # *args, **kwargs를 사용하면 나중에 메소트 호출에 추가 인수가 필요한 경우
+    # 수정이 더 쉽고 코드를 변경할 필요 없이 인수 전달 가능하다
     def save(self, *args, **kwargs):
         # 생성될 때 stock quantity를 0으로 초기화 로직
         if self.pk is None:
@@ -34,19 +29,11 @@ class Product(models.Model):
 
 # model
 class Inbound(models.Model):
-    """
-    입고 모델입니다.
-    상품, 수량, 입고 날짜, 금액 필드를 작성합니다.
-    """
     # on_delete=models.CASCADE 해당 상품이 삭제 시 입고 정보도 삭제
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     quantity = models.PositiveIntegerField(null=True)
     inbound_date = models.DateField(null=True)
     inbound_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-
-    # 출력 시 상품 이름, 입고 날짜, 입고 가격, 입고 수량 표시
-    def __str__(self):
-        return f"{self.product.name}\n{self.inbound_date}\n개당 {self.inbound_price} 원\n{self.quantity} 개 입고"
 
     # 저장 시 Product.stock_quantity 에 추가
     def save(self, *args, **kwargs):
@@ -62,19 +49,11 @@ class Inbound(models.Model):
 
 # model
 class Outbound(models.Model):
-    """
-    출고 모델입니다.
-    상품, 수량, 입고 날짜, 금액 필드를 작성합니다.
-    """
     # on_delete=models.CASCADE 해당 상품이 삭제 시 입고 정보도 삭제
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     quantity = models.PositiveIntegerField(null=True)
     outbound_date = models.DateField(null=True)
     outbound_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-
-    # 출력 시 상품 이름, 입고 날짜, 입고 가격, 입고 수량 표시
-    def __str__(self):
-        return f"{self.product.name}\n{self.outbound_date}\n개당 {self.outbound_price} 원\n{self.quantity} 개 출고"
 
     # 저장 시 Product.stock_quantity 에 추가
     def save(self, *args, **kwargs):
@@ -91,12 +70,3 @@ class Outbound(models.Model):
         self.product.save()
         super().save(*args, **kwargs)
 
-
-# model
-class Invetory(models.Model):
-    """
-    창고의 제품과 수량 정보를 담는 모델입니다.
-    상품, 수량 필드를 작성합니다.
-    작성한 Product 모델을 OneToOne 관계로 작성합시다.
-    """
-    pass

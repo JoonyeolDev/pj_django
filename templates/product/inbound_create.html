@@ -2,12 +2,12 @@
 
 {% block content %}
     <div class="container">
-        <h1 class="my-4">Add Inbound</h1>
+        <h1 class="my-4">입고 페이지</h1>
         <form method="post" class="mt-4" action="/inbound-create/{{ product.id }}">
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.id }}">
-            <h2><strong>Product:</strong> {{ product.name }}</h2>
-            <h4>Stock Quantity : {{ product.stock_quantity }}</h4>
+            <h2><strong>상품 :</strong> {{ product.name }}</h2>
+            <h4>현재 수량 : {{ product.stock_quantity }}</h4>
         <br>
             <div class="row">
                 {% for field in form %}
