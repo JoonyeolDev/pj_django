@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Product
+from .forms import ProductForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -20,7 +21,7 @@ def product_list(request):
 def product_create(request):
     # 상품 등록 view
     if request.method == 'POST':
-        product_form = Product(request.POST)
+        product_form = ProductForm(request.POST)
         if product_form.is_valid():
             product_form.save()
             return redirect('/product-list')
@@ -30,7 +31,7 @@ def product_create(request):
         if not user:
             return redirect('/sign-in')
         else:
-            product_form = Product()
+            product_form = ProductForm()
     return render(request, 'product/product_create.html', {'form': product_form})
 
 
