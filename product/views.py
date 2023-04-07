@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from .models import Product
 from django.contrib.auth.decorators import login_required
 
-
 # Create your views here.
 
 @login_required
@@ -11,7 +10,7 @@ def product_list(request):
     if request.method == 'GET':
         user = request.user.is_authenticated
         if user:
-            all_product = Product.objects.all().order_by('-created_at')
+            all_product = Product.objects.all()
             return render(request, 'product/product_list.html', {'product': all_product})
         else:
             return redirect('/sign-in')
@@ -28,7 +27,7 @@ def product_create(request):
 
     elif request.method == 'GET':
         user = request.user.is_authenticated
-        if user:
+        if not user:
             return redirect('/sign-in')
         else:
             product_form = Product()
@@ -40,6 +39,7 @@ def outbound_create(request, product_id):
     # 상품 출고 view
     # 출고 기록 생성
     # 재고 수량 조정
+    pass
 
 
 @login_required
@@ -48,6 +48,6 @@ def inventory(request):
     inbound_create, outbound_create view에서 만들어진 데이터를 합산합니다.
     Django ORM을 통하여 총 수량, 가격등을 계산할 수 있습니다.
     """
-# 총 입고 수량, 가격 계산
-
-# 총 출고 수량, 가격 계산
+    # 총 입고 수량, 가격 계산
+    # 총 출고 수량, 가격 계산
+    pass
