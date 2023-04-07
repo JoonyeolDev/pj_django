@@ -1,5 +1,5 @@
 from django import forms
-from product.models import Product
+from .models import Product, Inbound
 
 
 # form
@@ -13,12 +13,14 @@ class ProductForm(forms.ModelForm):
 
 # form
 class InboundForm(forms.ModelForm):
-    """
-    Django로 개발을 할때,
-    Model과 Form을 사용하지 않으면 Django를 사용하는 의미가 없다고 말할 정도로
-    Model과 Form은 Django의 핵심 기능 입니다.
-    Form의 사용방법을 익혀 봅시다.
-    """
+    class Meta:
+        model = Inbound
+        fields = ['product', 'quantity', 'inbound_date', 'inbound_price']
+        # 위젯을 이용하면 date를 정할 때 달력으로 할 수 있다
+        widgets = {
+            'inbound_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
 
 
 # form
